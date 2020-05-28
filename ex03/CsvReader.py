@@ -5,7 +5,7 @@ class CsvReader(object):
     def __init__(self, filename=None, sep=',', header=False,
                  skip_top=0, skip_bottom=0):
         self.file = None
-        if Path(filename).is_file():
+        if isinstance(filename, str) and Path(filename).is_file():
             self.header = header
             self.file = open(filename, "r")
             data = self.file.read().split('\n')
@@ -34,7 +34,7 @@ class CsvReader(object):
 
 
 def main():
-    with CsvReader('bad.csv', header=True) as file:
+    with CsvReader("good.csv", header=True) as file:
         if file is None:
             print("File is corrupted")
         else:
