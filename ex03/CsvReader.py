@@ -5,21 +5,19 @@ class CsvReader(object):
     def __init__(self, filename=None, sep=',', header=False,
                  skip_top=0, skip_bottom=0):
         self.file = None
+        self.header = None
         if isinstance(filename, str) and Path(filename).is_file():
-            self.header = header
-            self.head = None
-            self.skip_top = skip_top
             self.file = open(filename, "r")
             data = self.file.read().split('\n')
+            if header:
+                self.header = data.pop(0).split(sep)
             self.lines = [
                 line.split(sep)
                 for i, line in enumerate(data)
-                if skip_top < i < len(data) - skip_bottom - 1
+                if skip_top <= i < len(data) - skip_bottom - 1
             ]
-            if header:
-                self.head = data[0].split(sep)
-                if len(self.head) != len(self.lines[0]):
-                    self.file = None
+            if header and len(self.header) != len(self.lines[0]):
+                self.file = None
             if not all(len(line) == len(self.lines[0]) for line in self.lines):
                 self.file = None
 
@@ -33,16 +31,14 @@ class CsvReader(object):
             self.file.close()
 
     def getdata(self):
-        if self.header and self.skip_top == 0:
-            return self.lines[1:]
         return self.lines
 
     def getheader(self):
-        return self.head
+        return self.header
 
 
 def main():
-    with CsvReader("good.csv", header=True) as file:
+    with CsvReader("good.csv", header=False) as file:
         if file is None:
             print("File is corrupted")
         else:
