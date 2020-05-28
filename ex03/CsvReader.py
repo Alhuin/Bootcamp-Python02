@@ -5,7 +5,7 @@ class CsvReader(object):
     def __init__(self, filename=None, sep=',', header=False,
                  skip_top=0, skip_bottom=0):
         self.file = None
-        if Path("good.csv").is_file():
+        if Path(filename).is_file():
             self.header = header
             self.file = open(filename, "r")
             data = self.file.read().split('\n')
@@ -27,7 +27,7 @@ class CsvReader(object):
             self.file.close()
 
     def getdata(self):
-        return self.lines[1:]
+        return self.lines[1:] if self.header else self.lines
 
     def getheader(self):
         return self.lines[0] if self.header else None
