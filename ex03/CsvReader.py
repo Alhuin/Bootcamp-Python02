@@ -14,9 +14,10 @@ class CsvReader(object):
             self.lines = [
                 line.split(sep)
                 for i, line in enumerate(data)
-                if skip_top <= i < len(data) - skip_bottom - 1
+                if line != "" and skip_top <= i < len(data) - skip_bottom - 1
             ]
-            if header and len(self.header) != len(self.lines[0]):
+            if header and self.lines != [] \
+                    and len(self.header) != len(self.lines[0]):
                 self.file = None
             if not all(len(line) == len(self.lines[0]) for line in self.lines):
                 self.file = None
@@ -38,7 +39,7 @@ class CsvReader(object):
 
 
 def main():
-    with CsvReader("good.csv", header=False) as file:
+    with CsvReader("bad.csv", header=True, skip_bottom=6, skip_top=46) as file:
         if file is None:
             print("File is corrupted")
         else:
